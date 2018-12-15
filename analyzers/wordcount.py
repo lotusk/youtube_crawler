@@ -1,10 +1,8 @@
 from __future__ import print_function
-
-import sys
-from random import random
 from operator import add
 import json
 from pyspark.sql import SparkSession
+import argparse
 
 
 def to_id_pair(line):
@@ -26,7 +24,13 @@ def extract_word(line):
 
 
 if __name__ == "__main__":
-    file_name = "/Users/lucifer/PycharmProjects/youtube_crawler/ybi01.jl"
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--file', help='filename')
+    args = parser.parse_args()
+    file_name = args.file
+    if not args.file:
+        print("Please input file name")
+        exit(0)
     print("Ready for wordcount from file: %s" % file_name)
 
     spark = SparkSession \
@@ -46,8 +50,9 @@ if __name__ == "__main__":
         .reduceByKey(add) \
         .sortBy(lambda x: x[1])
 
-    output = counts.collect()
-    for (word, count) in output:
-        print("%s: %i" % (word, count))
+    # output = counts.collect()
+    counts.coalesce(1, shuffle=True).saveAsTextFile("%s_wordcount" % file_name)
+    # for (word, count) in output:
+    #     print("%s: %i" % (word, count))
 
     spark.stop()

@@ -39,4 +39,23 @@ curl -X PUT "localhost:9200/ybvideos" -H 'Content-Type: application/json' -d'
 '
 </pre>
 
+### run scrapy
+* `scrapy runspider crawler/search.py -o ybl.jl`
+
+### run index
+* `python indexs/writer.py --file ybi.jl` 
+
+### run wordcount analyzer
+* `spark-submit analyzers/wordcount.py --file ybl.jl`
+
+###
+<pre>
+cp dags/pipeline.py ~/airflow/dags/
+python ~/airflow/dags/pipeline.py
+
+airflow test youtube_crawler scrapy 2018-12-15
+airflow test youtube_crawler index 2018-12-15
+airflow test youtube_crawler wordcount 2018-12-15
+</pre>
+
 
