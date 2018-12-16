@@ -1,13 +1,15 @@
 # youtube_crawler
 ---
-###dependences
+
+### dependences
 * scipy
 * airflow
 * python
 * elasticsearch
 * pyspark
 
-##elastic mapping init
+### elastic mapping init
+
 <pre>
 curl -X PUT "localhost:9200/ybvideos" -H 'Content-Type: application/json' -d'
 {
