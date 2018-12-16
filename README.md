@@ -70,6 +70,7 @@ airflow backfill youtube_crawler -s 2018-12-15
 * I think just use download_delay is not good enough for throttle,we can set delay less than 10000/3600 (assume 1 hour 10000 is limit) and every hour give crawler 10000 token,we should stop when token use out.
 * maybe keyword as a event triggle pipeline.
 * check output file when report (for now  just print ok)
+* transform youtube json format.
 * make a classifier using searchword,title ,catetory , channel and description .
 * I don't know what is etag in response data. maybe useful.
 * download the video.
