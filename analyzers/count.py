@@ -23,6 +23,14 @@ def extract_word(line):
     return [word.lower() for word in description.split(' ') + title.split(' ')]
 
 
+def extract_title(line):
+    print("line: %s" % line)
+    # line = line.strip()
+    doc = json.loads(line)
+    snippet = doc.get("snippet")
+    return snippet.get("channelTitle")
+
+
 def extract_word_nltk(line):
     import nltk
     doc = json.loads(line)
@@ -32,14 +40,7 @@ def extract_word_nltk(line):
     return [word.lower() for word in nltk.word_tokenize(description) + nltk.word_tokenize(title)]
 
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--file', help='filename')
-    args = parser.parse_args()
-    file_name = args.file
-    if not args.file:
-        print("Please input file name")
-        exit(0)
+def word_count():
     print("Ready for wordcount from file: %s" % file_name)
 
     spark = SparkSession \
@@ -66,3 +67,55 @@ if __name__ == "__main__":
     #     print("%s: %i" % (word, count))
 
     spark.stop()
+
+
+def channel_title_count():
+    print("Ready for wordcount from file: %s" % file_name)
+
+    spark = SparkSession \
+        .builder \
+        .appName("WordCount") \
+        .getOrCreate()
+
+    lines = spark.sparkContext.textFile(file_name) \
+        .map(to_id_pair) \
+        .reduceByKey(lambda x, y: x) \
+        .map(lambda x: x[1])  # deduplicate by id
+
+    print("lines count %s" % lines.count())
+
+    # counts = lines.flatMap(extract_word_nltk) \
+    counts = lines.map(extract_title) \
+        .map(lambda x: (x, 1)) \
+        .reduceByKey(add) \
+        .sortBy(lambda x: x[1])
+
+    # output = counts.collect()
+    counts.coalesce(1, shuffle=True).saveAsTextFile("%s_channel_title_count" % file_name)
+    # for (word, count) in output:
+    #     print("%s: %i" % (word, count))
+
+    spark.stop()
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--file', help='filename')
+    parser.add_argument('--option', help='wordcount or channeltitle count')
+    args = parser.parse_args()
+    file_name = args.file
+    if not args.file:
+        print("Please input file name")
+        exit(1)
+
+    if not args.option:
+        print("Please input which count you will do word or channeltitle")
+        exit(1)
+
+    if args.option == 'word':
+        word_count()
+    elif args.option == 'channeltitle':
+        channel_title_count()
+    else:
+        print("options is word or channeltitle")
+        exit(1)
