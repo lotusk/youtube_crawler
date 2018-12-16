@@ -1,11 +1,18 @@
 import scrapy
 import json
+import os
+import urllib
 
 
 class YBSearchSpider(scrapy.Spider):
     name = "quotes"
-    key = "AIzaSyDu9IzmKRZsiFq2tPVb2qFLxqeGBSa6GMc"
-    url_template = "https://www.googleapis.com/youtube/v3/search?part=snippet&q=%s&maxResults=%s&videoCategoryId=27&type=video&key=" + key
+    try:
+        key = os.environ['YOUTUBE_KEY']  # AIzaSyDu9IzmKRZsiFq2tPVb2qFLxqeGBSa6GMc
+    except:
+        print("Please make sure YOUTUBE_KEY in Env")
+        raise
+
+    url_template = "https://www.googleapis.com/youtube/v3/search?part=snippet&videoCategoryId=27&type=video&"
     max_result = 50
     # download_delay = 10000/3600.0  # Throttle  set in settings.py
 
@@ -24,8 +31,11 @@ class YBSearchSpider(scrapy.Spider):
     ]
 
     def start_requests(self):
-        urls = [self.url_template % (keyword, self.max_result) for keyword in self.keywords]
-        # urls = urls[:1000]  # I think scrapy will have a config about max request , find it later
+        urls = [
+            self.url_template + urllib.parse.urlencode({"q": keyword, "maxResults": self.max_result, "key": self.key})
+            for keyword in
+            self.keywords]
+        # urls = urls[:1]  # I think scrapy will have a config about max request , find it later
         for url in urls:
             yield scrapy.Request(url=url, callback=self.parse)
 
