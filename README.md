@@ -2,11 +2,11 @@
 ---
 
 ### dependences
-* scipy
-* airflow
-* python
-* elasticsearch
-* pyspark
+* scrapy 1.5.1
+* airflow 1.10.1
+* python 3.5.2
+* elasticsearch 6.5.3
+* pyspark (spark 2.4.0)
 
 ### elastic mapping init
 
