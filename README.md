@@ -42,7 +42,7 @@ curl -X PUT "localhost:9200/ybvideos" -H 'Content-Type: application/json' -d'
 </pre>
 
 ### run scrapy
-* `scrapy runspider crawler/search.py -o ybl.jl`
+* `scrapy runspider crawler/spiders/search.py -o ybl.jl`
 
 ### run index
 * `python indexs/writer.py --file ybi.jl` 

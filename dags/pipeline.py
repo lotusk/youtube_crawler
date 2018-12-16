@@ -29,7 +29,7 @@ dag = DAG('youtube_crawler', default_args=default_args, schedule_interval=timede
 # t1, t2 and t3 are examples of tasks created by instantiating operators
 t1 = BashOperator(
     task_id='scrapy',
-    bash_command='cd {} && scrapy runspider crawler/search.py -o {}'.format(crawler_path, file_name),
+    bash_command='cd {} && scrapy runspider crawler/spiders/search.py -o {}'.format(crawler_path, file_name),
     dag=dag)
 
 t2 = BashOperator(
