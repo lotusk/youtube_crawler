@@ -59,7 +59,7 @@ airflow test youtube_crawler scrapy 2018-12-15
 airflow test youtube_crawler index 2018-12-15
 airflow test youtube_crawler wordcount 2018-12-15
 
-airflow backfill youtube_crawler -s 2018-12-16  (does it a right way that backfill make all flow happen??)
+airflow backfill youtube_crawler -s 2018-12-16 
 </pre>
 
 
