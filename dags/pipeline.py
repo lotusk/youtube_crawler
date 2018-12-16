@@ -6,6 +6,8 @@ from airflow import DAG
 from airflow.operators.bash_operator import BashOperator
 from datetime import datetime, timedelta
 
+crawler_path = "/Users/lucifer/PycharmProjects/youtube_crawler/"
+file_name = "ybi04.jl"
 
 default_args = {
     'owner': 'kai',
@@ -27,19 +29,25 @@ dag = DAG('youtube_crawler', default_args=default_args, schedule_interval=timede
 # t1, t2 and t3 are examples of tasks created by instantiating operators
 t1 = BashOperator(
     task_id='scrapy',
-    bash_command='cd /Users/lucifer/PycharmProjects/youtube_crawler/;scrapy runspider crawler/search.py -o /Users/lucifer/PycharmProjects/youtube_crawler/ybi03.jl',
+    bash_command='cd {} && scrapy runspider crawler/search.py -o {}'.format(crawler_path, file_name),
     dag=dag)
 
 t2 = BashOperator(
     task_id='index',
-    bash_command='cd /Users/lucifer/PycharmProjects/youtube_crawler/;python indexs/writer.py --file /Users/lucifer/PycharmProjects/youtube_crawler/ybi03.jl',
+    bash_command='cd {} && python indexs/writer.py --file {}'.format(crawler_path, file_name),
     dag=dag)
-
 
 t3 = BashOperator(
     task_id='wordcount',
-    bash_command='cd /Users/lucifer/PycharmProjects/youtube_crawler/;spark-submit analyzers/wordcount.py --file /Users/lucifer/PycharmProjects/youtube_crawler/ybi03.jl',
+    bash_command='cd {} && spark-submit analyzers/wordcount.py --file {}'.format(crawler_path, file_name),
     dag=dag)
 
+t4 = BashOperator(
+    task_id='report_status',
+    bash_command='echo "I am Finished ,Please checkout ~"',
+    dag=dag)
 t2.set_upstream(t1)
 t3.set_upstream(t1)
+
+t4.set_upstream(t2)
+t4.set_upstream(t3)
