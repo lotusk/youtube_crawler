@@ -41,6 +41,7 @@ def extract_word_nltk(line):
 
 
 def word_count():
+    """count the word in title and description"""
     print("Ready for wordcount from file: %s" % file_name)
 
     spark = SparkSession \
@@ -70,6 +71,7 @@ def word_count():
 
 
 def channel_title_count():
+    """count channel title"""
     print("Ready for wordcount from file: %s" % file_name)
 
     spark = SparkSession \
@@ -84,16 +86,12 @@ def channel_title_count():
 
     print("lines count %s" % lines.count())
 
-    # counts = lines.flatMap(extract_word_nltk) \
     counts = lines.map(extract_title) \
         .map(lambda x: (x, 1)) \
         .reduceByKey(add) \
         .sortBy(lambda x: x[1])
 
-    # output = counts.collect()
     counts.coalesce(1, shuffle=True).saveAsTextFile("%s_channel_title_count" % file_name)
-    # for (word, count) in output:
-    #     print("%s: %i" % (word, count))
 
     spark.stop()
 
