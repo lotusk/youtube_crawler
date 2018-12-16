@@ -20,7 +20,16 @@ def extract_word(line):
     snippet = doc.get("snippet")
     description = snippet.get("description")
     title = snippet.get("title")
-    return description.split(' ') + title.split(' ')
+    return [word.lower() for word in description.split(' ') + title.split(' ')]
+
+
+def extract_word_nltk(line):
+    import nltk
+    doc = json.loads(line)
+    snippet = doc.get("snippet")
+    description = snippet.get("description")
+    title = snippet.get("title")
+    return [word.lower() for word in nltk.word_tokenize(description) + nltk.word_tokenize(title)]
 
 
 if __name__ == "__main__":
@@ -41,10 +50,11 @@ if __name__ == "__main__":
     lines = spark.sparkContext.textFile(file_name) \
         .map(to_id_pair) \
         .reduceByKey(lambda x, y: x) \
-        .map(lambda x: x[1]) # deduplicate by id
+        .map(lambda x: x[1])  # deduplicate by id
 
     print("lines count %s" % lines.count())
 
+    # counts = lines.flatMap(extract_word_nltk) \
     counts = lines.flatMap(extract_word) \
         .map(lambda x: (x, 1)) \
         .reduceByKey(add) \
