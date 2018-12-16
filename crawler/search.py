@@ -7,6 +7,7 @@ class YBSearchSpider(scrapy.Spider):
     key = "AIzaSyDu9IzmKRZsiFq2tPVb2qFLxqeGBSa6GMc"
     url_template = "https://www.googleapis.com/youtube/v3/search?part=snippet&q=%s&maxResults=%s&videoCategoryId=27&type=video&key=" + key
     max_result = 50
+    download_delay = 10000/3600.0
 
     keywords = [
         "hadoop",
@@ -15,7 +16,11 @@ class YBSearchSpider(scrapy.Spider):
         "tensorflow",
         "keras",
         "scala",
-        "python"
+        "python",
+        "java",
+        "storm",
+        "lstm",
+        "nlp"
     ]
 
     def start_requests(self):
