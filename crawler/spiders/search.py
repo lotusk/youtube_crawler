@@ -54,7 +54,6 @@ class YBSearchSpider(scrapy.Spider):
 
         for item in items:
             related_id = item.get("id").get("videoId")
-            print("related_id:%s" % related_id)
             url = self.url_template + urllib.parse.urlencode(
                 {"relatedToVideoId": related_id, "maxResults": self.max_result, "key": self.key})
             yield scrapy.Request(url, callback=self.just_parse_items)
