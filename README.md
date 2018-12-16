@@ -72,3 +72,4 @@ airflow backfill youtube_crawler -s 2018-12-15
 * check output file when report (for now  just print ok)
 * make a classifier using title ,catetory , channel and description .
 * I don't know what is etag in response data. maybe useful.
+* download the video.
