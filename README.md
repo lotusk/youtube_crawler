@@ -71,6 +71,7 @@ airflow backfill youtube_crawler -s 2018-12-15
 * maybe keyword as a event triggle pipeline.
 * check output file when report (for now  just print ok)
 * transform youtube json format.
+* filter datas invalid
 * make a classifier using searchword,title ,catetory , channel and description .
 * I don't know what is etag in response data. maybe useful.
 * download the video.
