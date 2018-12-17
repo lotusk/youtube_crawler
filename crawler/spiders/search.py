@@ -31,9 +31,12 @@ class YBSearchSpider(scrapy.Spider):
         "nlp"
     ]
 
+    def build_url(self, params):
+        return self.url_template + urllib.parse.urlencode(params)
+
     def start_requests(self):
         urls = [
-            self.url_template + urllib.parse.urlencode({"q": keyword, "maxResults": self.max_result, "key": self.key})
+            self.build_url({"q": keyword, "maxResults": self.max_result, "key": self.key})
             for keyword in
             self.keywords]
         urls = urls[:1]  # I think scrapy will have a config about max request , find it later
@@ -54,6 +57,6 @@ class YBSearchSpider(scrapy.Spider):
 
         for item in items:
             related_id = item.get("id").get("videoId")
-            url = self.url_template + urllib.parse.urlencode(
+            url = self.build_url(
                 {"relatedToVideoId": related_id, "maxResults": self.max_result, "key": self.key})
             yield scrapy.Request(url, callback=self.just_parse_items)
